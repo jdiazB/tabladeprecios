@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Datos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .highest { background-color: rgba(144, 238, 144, 0.5); } /* verde claro */
+        .lowest { background-color: rgba(255, 182, 193, 0.5); } /* rojo claro */
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-2 p-4">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <label for="file" class="text-gray-700 text-sm font-bold">Cargar archivo:</label>
+                <form action="/" method="post" enctype="multipart/form-data" class="flex items-center space-x-2">
+                    <input type="file" id="file" name="file" class="border border-gray-300 rounded p-2">
+                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Cargar</button>
+                </form>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <label for="zona" class="text-gray-700 text-sm font-bold">Seleccionar Zona:</label>
+                <form action="/filter" method="post" class="flex items-center space-x-2">
+                    <select id="zona" name="zona" class="border border-gray-300 rounded p-2">
+                        <option value="">Todas</option>
+                        {% for zona in zonas %}
+                            <option value="{{ zona }}">{{ zona }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded">Filtrar</button>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="mt-2">
+            <h2 class="text-xl font-bold mb-2">Tabla de Descuentos</h2>
+            <table class="min-w-full bg-white border border-gray-300 rounded mt-2">
+                <thead>
+                    <tr>
+                        <th class="py-1 px-2 border-b">TERMINAL</th>
+                        <th class="py-1 px-2 border-b">PROVEEDOR</th>
+                        {% for producto in productos %}
+                            <th class="py-1 px-2 border-b text-center">{{ producto }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in descuentos %}
+                        <tr>
+                            <td class="py-1 px-2 border-b">{{ row['TERMINAL'] }}</td>
+                            <td class="py-1 px-2 border-b">{{ row['PROVEEDOR'] }}</td>
+                            {% for producto in productos %}
+                            <td class="py-1 px-2 border-b text-center
+                            {% if row[producto] is not none %}
+                                {% if row[producto] == max_descuentos[producto] %}
+                                    highest
+                                {% elif row[producto] == min_descuentos[producto] %}
+                                    lowest
+                                {% endif %}
+                            {% endif %}
+                        ">
+                                {% if row[producto] is not none and row[producto] is not string %}
+                                    {{ row[producto] | float | round(2) }}
+                                {% else %}
+                                   &nbsp;
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <h2 class="text-xl font-bold mb-2">Precio Venta Incl. IGV + Percepción</h2>
+            <table class="min-w-full bg-white border border-gray-300 rounded mt-2">
+                <thead>
+                    <tr>
+                        <th class="py-1 px-2 border-b">TERMINAL</th>
+                        <th class="py-1 px-2 border-b">PROVEEDOR</th>
+                        {% for producto in productos %}
+                            <th class="py-1 px-2 border-b text-center">{{ producto }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in precios %}
+                        <tr>
+                            <td class="py-1 px-2 border-b">{{ row['TERMINAL'] }}</td>
+                            <td class="py-1 px-2 border-b">{{ row['PROVEEDOR'] }}</td>
+                            {% for producto in productos %}
+                            <td class="py-1 px-2 border-b text-center
+                                    {% if row[producto] is not none %}
+                                        {% if row[producto] == max_precios[producto] %}
+                                            highest
+                                        {% elif row[producto] == min_precios[producto] %}
+                                            lowest
+                                        {% endif %}
+                                    {% endif %}
+                                ">
+                                {% if row[producto] is not none and row[producto] is not string %}
+                                    {{ row[producto] | float | round(4) }}
+                                {% else %}
+                                    &nbsp;
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

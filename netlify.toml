@@ -1,0 +1,12 @@
+[build]
+  publish = "build"
+  command = "echo 'No build command for static files'"
+
+[build.environment]
+  NODE_VERSION = "14" # Si utilizas Node.js, ajusta la versión según sea necesario
+
+[context.deploy-preview]
+  command = "echo 'No build command for deploy preview'"
+
+[context.production]
+  command = "echo 'No build command for production'"
